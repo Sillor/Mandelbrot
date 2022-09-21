@@ -9,8 +9,8 @@ using namespace std;
 
 int main() {
 
-    int screenWidth = 500;//VideoMode::getDesktopMode().width;
-    int screenHeight = 500;//VideoMode::getDesktopMode().height;
+    int screenWidth = VideoMode::getDesktopMode().width;
+    int screenHeight = VideoMode::getDesktopMode().height;
     double aspectRatio = (double)screenHeight / screenWidth;
 
     cout << screenHeight << "\t" << screenWidth << "\t" << aspectRatio;
