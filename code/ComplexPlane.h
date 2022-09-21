@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "HSL.hpp"
 
 using namespace sf;
 using namespace std;

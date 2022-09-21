@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "ComplexPlane.h"
+#include "HSL.hpp"
 
 // Make code easier to type with "using namespace"
 using namespace sf;
@@ -9,8 +10,8 @@ using namespace std;
 
 int main() {
 
-    int screenWidth = VideoMode::getDesktopMode().width;
-    int screenHeight = VideoMode::getDesktopMode().height;
+    double screenWidth = 500;// VideoMode::getDesktopMode().width;
+    double screenHeight = 500;// VideoMode::getDesktopMode().height;
     double aspectRatio = (double)screenHeight / screenWidth;
 
     cout << screenHeight << "\t" << screenWidth << "\t" << aspectRatio;
@@ -53,9 +54,11 @@ int main() {
                 window.close();
             }
             if (event.type == Event::MouseButtonPressed) {
-                Vector2f clickCoords = window.mapPixelToCoords(Mouse::getPosition(window));
+                Vector2f clickCoords = window.mapPixelToCoords(Mouse::getPosition(window), plane.getView());
                 if (event.mouseButton.button == Mouse::Left) {
                     cout << "\nLeft click:\t" << clickCoords.x << "\t" << clickCoords.y;
+                    plane.zoomIn();
+                    plane.setCenter(clickCoords);
                 }
                 if (event.mouseButton.button == Mouse::Right) {
                     cout << "\nRight click:\t" << clickCoords.x << "\t" << clickCoords.y;

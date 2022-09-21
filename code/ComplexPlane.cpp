@@ -2,6 +2,7 @@
 #include <iostream>
 #include <complex>
 #include "ComplexPlane.h"
+#include "HSL.cpp"
 
 using namespace sf;
 using namespace std;
@@ -60,35 +61,19 @@ size_t ComplexPlane::countIterations(Vector2f coord) {
 }
 
 void ComplexPlane::iterationsToRGB(size_t count, Uint8& r, Uint8& g, Uint8& b) {
+	HSL hueCol;
+
 	if (count >= MAX_ITER) {
 		r = g = b = 0;
 	}
 	else {
-		r = g = b = 255 / (count + 1);
+		hueCol.Hue = 360.0 / 10.0 * count;
+		hueCol.Saturation = 100;
+		hueCol.Luminance = 50;
+
+		Color col = hueCol.TurnToRGB();
+		r = col.r;
+		g = col.g;
+		b = col.b;
 	}
-	/*else if (count <= MAX_ITER / 5) {
-		r = 128;
-		g = 0;
-		b = 128;
-	}
-	else if (count <= MAX_ITER / 5 * 2) {
-		r = 64;
-		g = 224;
-		b = 208;
-	}
-	else if (count <= MAX_ITER / 5 * 3) {
-		r = 0;
-		g = 128;
-		b = 0;
-	}
-	else if (count <= MAX_ITER / 5 * 4) {
-		r = 255;
-		g = 255;
-		b = 0;
-	}
-	else {
-		r = 255;
-		g = 0;
-		b = 0;
-	}*/
 }
