@@ -10,8 +10,8 @@ using namespace std;
 
 int main() {
 
-    double screenWidth = 500;// VideoMode::getDesktopMode().width;
-    double screenHeight = 500;// VideoMode::getDesktopMode().height;
+    double screenWidth = 1920;//VideoMode::getDesktopMode().width;
+    double screenHeight = 1080;// VideoMode::getDesktopMode().height;
     double aspectRatio = (double)screenHeight / screenWidth;
 
     cout << screenHeight << "\t" << screenWidth << "\t" << aspectRatio;
@@ -21,20 +21,28 @@ int main() {
 
 
 
-
-
     ComplexPlane plane(aspectRatio);
+
     Font font;
+    font.loadFromFile("fonts/editundo.ttf");
+
     Text text;
     VertexArray vArr;
+
+    RectangleShape textBg;
+    textBg.setSize(Vector2f(300,110));
+    textBg.setFillColor(Color(0, 0, 0, 100));
+
+	text.setFont(font);
+	text.setCharacterSize(screenHeight * screenWidth / 100000);
+	text.setStyle(Text::Bold);
+    text.setPosition(3, 3);
 
     vArr.setPrimitiveType(Points);
     vArr.resize(screenWidth * screenHeight);
 
     enum class State{CALCULATING, DISPLAYING};
     State state = State::CALCULATING;
-
-
 
     // Create and open a window for the game
     RenderWindow window(vm, "Mandelbrot", Style::Titlebar | Style::Close);
@@ -67,6 +75,10 @@ int main() {
                 }
                 state = State::CALCULATING;
             }
+            if (event.type == Event::MouseMoved) {
+                Vector2f mouseCoords = window.mapPixelToCoords(Mouse::getPosition(window), plane.getView());
+                plane.setMouseLocation(mouseCoords);
+            }
         }
 
         // Close the window
@@ -93,6 +105,7 @@ int main() {
             }
         state = State::DISPLAYING;
 
+        plane.loadText(text);
 
         /*
         ****************************************
@@ -104,6 +117,8 @@ int main() {
         window.clear();
 
         window.draw(vArr);
+        window.draw(textBg);
+        window.draw(text);
 
         // Show everything we just drew
         window.display();

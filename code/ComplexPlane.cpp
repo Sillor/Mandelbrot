@@ -3,6 +3,7 @@
 #include <complex>
 #include "ComplexPlane.h"
 #include "HSL.cpp"
+#include <sstream>
 
 using namespace sf;
 using namespace std;
@@ -19,7 +20,7 @@ void ComplexPlane::zoomIn() {
 	m_zoomCount++;
 	x = BASE_WIDTH * pow(BASE_ZOOM, m_zoomCount);
 	y = BASE_HEIGHT * m_aspectRatio * pow(BASE_ZOOM, m_zoomCount);
-	m_view.setSize(x, y);
+	m_view.setSize(x, -y);
 }
 
 void ComplexPlane::zoomOut() {
@@ -43,7 +44,19 @@ void ComplexPlane::setMouseLocation(Vector2f coord) {
 }
 
 void ComplexPlane::loadText(Text& text) {
+	string l1 = "Mandelbrot Set\n";
+	string l2 = "Center: ";
+	string l3 = "Cursor: ";
+	string l4 = "Left-click to Zoom in\nRight-click to Zoom out";
 
+	string newString;
+
+	string center = "(" + to_string(m_view.getCenter().x) + ", " + to_string(m_view.getCenter().y) + ")\n";
+	string mouseCoords = "(" + to_string(m_mouseLocation.x) + ", " + to_string(m_mouseLocation.y) + ")\n";
+
+	newString = l1 + l2 + center + l3 + mouseCoords + l4;
+
+	text.setString(newString);
 }
 
 size_t ComplexPlane::countIterations(Vector2f coord) {
