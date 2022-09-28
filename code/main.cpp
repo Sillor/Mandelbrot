@@ -9,39 +9,6 @@
 using namespace sf;
 using namespace std;
 
-void calculate(double w, double h, VertexArray* vArr, RenderWindow* window, ComplexPlane plane, int threads, int n) {
-    double x = 0;
-    double y = 0;
-
-    /*for (int i = n; i < h; i += threads)
-    {
-        for (int j = 0; j < w; j++)
-        {
-
-        }
-    }*/
-
-    while (n >= sqrt(threads)) {
-        n -= sqrt(threads);
-        y += h / sqrt(threads);
-    }
-
-    if (n < sqrt(threads)) {
-        x = w / sqrt(threads) * n;
-    }
-        
-    for (int i = y; i < (y + h / sqrt(threads)); i++) {
-        for (int j = x; j < (x + w / sqrt(threads)); j++) {
-            (*vArr)[j + i * w].position = { (float)j, (float)i };
-            Vector2f pixelCoords = (*window).mapPixelToCoords(Vector2i(j, i), plane.getView());
-            int iter = plane.countIterations(pixelCoords);
-            Uint8 r, g, b;
-            plane.iterationsToRGB(iter, r, g, b);
-            (*vArr)[j + i * w].color = { r, g, b };
-        }
-    }
-}
-
 int main() {
 
     double screenWidth = VideoMode::getDesktopMode().width;
@@ -128,12 +95,11 @@ int main() {
             const int THREADS = 16;
             thread thr[THREADS];
             for (int i = 0; i < THREADS; i++) {
-                thr[i] = thread(calculate, screenWidth, screenHeight, &vArr, &window, plane, THREADS, i);
+                thr[i] = thread(&ComplexPlane::calculate, plane, screenWidth, screenHeight, &vArr, &window, plane, THREADS, i);
             }
             for (int i = 0; i < THREADS; i++) {
                 thr[i].join();
             }
-            //plane.calculate(screenWidth, screenHeight, &vArr, &window, plane);
         }
 
         state = State::DISPLAYING;
