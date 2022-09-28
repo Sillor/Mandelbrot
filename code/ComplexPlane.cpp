@@ -2,7 +2,7 @@
 #include <iostream>
 #include <complex>
 #include "ComplexPlane.h"
-#include "HSL.cpp"
+#include "HSL.hpp"
 #include <sstream>
 
 using namespace sf;
@@ -64,7 +64,7 @@ size_t ComplexPlane::countIterations(Vector2f coord) {
 	complex<double> z (0, 0);
 	complex<double> c (coord.x, coord.y);
 
-	for (int i = 1; i <= MAX_ITER; i++) {
+	for (unsigned int i = 1; i <= MAX_ITER; i++) {
 		z = z * z + c;
 		if (abs(z) <= 2.0) {
 			count++;
