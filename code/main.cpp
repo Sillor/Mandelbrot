@@ -2,24 +2,39 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "ComplexPlane.h"
-#include "HSL.hpp"
+#include <thread>
 
 // Make code easier to type with "using namespace"
 using namespace sf;
 using namespace std;
 
+void calculater(double w, double h, VertexArray* vArr, RenderWindow* window, ComplexPlane plane, int threads) {
+    for (int k = 0; k < threads; k++) {
+        double x = w / threads;
+        double y = h / threads;
+        for (int i = y * k; i < y * (k + 1); i++) {
+            for (int j = 0; j < w; j++) {
+                (*vArr)[j + i * w].position = { (float)j, (float)i };
+                Vector2f pixelCoords = (*window).mapPixelToCoords(Vector2i(j, i), plane.getView());
+                int iter = plane.countIterations(pixelCoords);
+                Uint8 r, g, b;
+                plane.iterationsToRGB(iter, r, g, b);
+                (*vArr)[j + i * w].color = { r, g, b };
+            }
+        }
+    }
+}
+
 int main() {
 
-    double screenWidth = 1920;//VideoMode::getDesktopMode().width;
-    double screenHeight = 1080;// VideoMode::getDesktopMode().height;
+    double screenWidth = VideoMode::getDesktopMode().width;
+    double screenHeight = VideoMode::getDesktopMode().height;
     double aspectRatio = (double)screenHeight / screenWidth;
 
     cout << screenHeight << "\t" << screenWidth << "\t" << aspectRatio;
     
     // Create a video mode object
     VideoMode vm(screenWidth, screenHeight);
-
-
 
     ComplexPlane plane(aspectRatio);
 
@@ -34,7 +49,7 @@ int main() {
     textBg.setFillColor(Color(0, 0, 0, 100));
 
 	text.setFont(font);
-	text.setCharacterSize(screenHeight * screenWidth / 100000);
+	text.setCharacterSize(20);
 	text.setStyle(Text::Bold);
     text.setPosition(3, 3);
 
@@ -92,17 +107,18 @@ int main() {
         ****************************************
         */
 
-        if (state == State::CALCULATING)
-            for (int i = 0; i < screenHeight; i++) {
-                for (int j = 0; j < screenWidth; j++) {
-                    vArr[j + i * screenWidth].position = { (float)j, (float)i };
-                    Vector2f pixelCoords = window.mapPixelToCoords(Vector2i(j, i), plane.getView());
-                    int iter = plane.countIterations(pixelCoords);
-                    Uint8 r, g, b;
-                    plane.iterationsToRGB(iter, r, g, b);
-                    vArr[j + i * screenWidth].color = { r, g, b };
-                }
+        if (state == State::CALCULATING) {
+            const int THREADS = 6;
+            thread thr[THREADS];
+            for (int i = 0; i < THREADS; i++) {
+                thr[i] = thread(calculater, screenWidth, screenHeight, &vArr, &window, plane, THREADS);
             }
+            for (int i = 0; i < THREADS; i++) {
+                thr[i].join();
+            }
+            //plane.calculate(screenWidth, screenHeight, &vArr, &window, plane);
+        }
+
         state = State::DISPLAYING;
 
         plane.loadText(text);
