@@ -2,7 +2,7 @@
 #include <iostream>
 #include <complex>
 #include "ComplexPlane.h"
-#include "HSL.hpp"
+#include "HSL.hpp" //change to #include "HSL.cpp" on Windows
 #include <sstream>
 
 using namespace sf;
