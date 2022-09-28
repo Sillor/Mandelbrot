@@ -93,17 +93,20 @@ void ComplexPlane::iterationsToRGB(size_t count, Uint8& r, Uint8& g, Uint8& b) {
 }
 
 void ComplexPlane::calculate(double w, double h, VertexArray* vArr, RenderWindow* window, ComplexPlane plane, int threads, int n) {
+	for (int i = n; i < h; i += threads) {
+		for (int j = 0; j < w; j++) {
+			(*vArr)[j + i * w].position = { (float)j, (float)i };
+			Vector2f pixelCoords = (*window).mapPixelToCoords(Vector2i(j, i), plane.getView());
+			int iter = plane.countIterations(pixelCoords);
+			Uint8 r, g, b;
+			plane.iterationsToRGB(iter, r, g, b);
+			(*vArr)[j + i * w].color = { r, g, b };
+		}
+	}
+
+	/*
 	double x = 0;
 	double y = 0;
-
-	/*for (int i = n; i < h; i += threads)
-	{
-		for (int j = 0; j < w; j++)
-		{
-
-		}
-	}*/
-
 	while (n >= sqrt(threads)) {
 		n -= sqrt(threads);
 		y += h / sqrt(threads);
@@ -122,5 +125,5 @@ void ComplexPlane::calculate(double w, double h, VertexArray* vArr, RenderWindow
 			plane.iterationsToRGB(iter, r, g, b);
 			(*vArr)[j + i * w].color = { r, g, b };
 		}
-	}
+	}*/
 }
