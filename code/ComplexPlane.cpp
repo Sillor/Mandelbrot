@@ -2,7 +2,7 @@
 #include <iostream>
 #include <complex>
 #include "ComplexPlane.h"
-#include "HSL.hpp" //change to #include "HSL.cpp" on Windows
+#include "HSL.hpp"
 #include <sstream>
 
 using namespace sf;
@@ -80,7 +80,8 @@ void ComplexPlane::iterationsToRGB(size_t count, Uint8& r, Uint8& g, Uint8& b) {
 		r = g = b = 0;
 	}
 	else {
-		hueCol.Hue = 360.0 / 10.0 * count;
+		//hueCol.Hue = 360.0 / 10.0 * count;
+		hueCol.Hue = 360.0 * (1.0 * count / MAX_ITER);
 		hueCol.Saturation = 100;
 		hueCol.Luminance = 50;
 

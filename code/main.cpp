@@ -13,6 +13,14 @@ void calculate(double w, double h, VertexArray* vArr, RenderWindow* window, Comp
     double x = 0;
     double y = 0;
 
+    /*for (int i = n; i < h; i += threads)
+    {
+        for (int j = 0; j < w; j++)
+        {
+
+        }
+    }*/
+
     while (n >= sqrt(threads)) {
         n -= sqrt(threads);
         y += h / sqrt(threads);
