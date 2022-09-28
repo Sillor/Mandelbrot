@@ -26,6 +26,5 @@ public:
 	void loadText(Text& text);
 	size_t countIterations(Vector2f coord);
 	void iterationsToRGB(size_t count, Uint8& r, Uint8& g, Uint8& b);
-	void calculate(double w, double h, VertexArray *vArr, RenderWindow *window, ComplexPlane plane);
 
 };

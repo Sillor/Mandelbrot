@@ -3,24 +3,33 @@
 #include <iostream>
 #include "ComplexPlane.h"
 #include <thread>
+#include <cmath>
 
 // Make code easier to type with "using namespace"
 using namespace sf;
 using namespace std;
 
-void calculater(double w, double h, VertexArray* vArr, RenderWindow* window, ComplexPlane plane, int threads) {
-    for (int k = 0; k < threads; k++) {
-        double x = w / threads;
-        double y = h / threads;
-        for (int i = y * k; i < y * (k + 1); i++) {
-            for (int j = 0; j < w; j++) {
-                (*vArr)[j + i * w].position = { (float)j, (float)i };
-                Vector2f pixelCoords = (*window).mapPixelToCoords(Vector2i(j, i), plane.getView());
-                int iter = plane.countIterations(pixelCoords);
-                Uint8 r, g, b;
-                plane.iterationsToRGB(iter, r, g, b);
-                (*vArr)[j + i * w].color = { r, g, b };
-            }
+void calculate(double w, double h, VertexArray* vArr, RenderWindow* window, ComplexPlane plane, int threads, int n) {
+    double x = 0;
+    double y = 0;
+
+    while (n >= sqrt(threads)) {
+        n -= sqrt(threads);
+        y += h / sqrt(threads);
+    }
+
+    if (n < sqrt(threads)) {
+        x = w / sqrt(threads) * n;
+    }
+        
+    for (int i = y; i < (y + h / sqrt(threads)); i++) {
+        for (int j = x; j < (x + w / sqrt(threads)); j++) {
+            (*vArr)[j + i * w].position = { (float)j, (float)i };
+            Vector2f pixelCoords = (*window).mapPixelToCoords(Vector2i(j, i), plane.getView());
+            int iter = plane.countIterations(pixelCoords);
+            Uint8 r, g, b;
+            plane.iterationsToRGB(iter, r, g, b);
+            (*vArr)[j + i * w].color = { r, g, b };
         }
     }
 }
@@ -108,10 +117,10 @@ int main() {
         */
 
         if (state == State::CALCULATING) {
-            const int THREADS = 6;
+            const int THREADS = 16;
             thread thr[THREADS];
             for (int i = 0; i < THREADS; i++) {
-                thr[i] = thread(calculater, screenWidth, screenHeight, &vArr, &window, plane, THREADS);
+                thr[i] = thread(calculate, screenWidth, screenHeight, &vArr, &window, plane, THREADS, i);
             }
             for (int i = 0; i < THREADS; i++) {
                 thr[i].join();
